@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiWeb - Gestión de Inventario</title>
+    <style>
+        /* Estilos generales */
+        :root {
+            --color-primario: #2C3E50;
+            --color-secundario: #3498DB;
+            --color-acento: #E74C3C;
+            --color-texto: #333333;
+            --color-fondo: #F9F9F9;
+            --color-blanco: #FFFFFF;
+            --color-sombra: rgba(0, 0, 0, 0.1);
+            --color-borde: #e0e0e0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--color-blanco);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px var(--color-sombra);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--color-primario);
+            text-decoration: none;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            color: var(--color-primario);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--color-secundario);
+        }
+        
+        .btn-login {
+            background-color: var(--color-secundario);
+            color: var(--color-blanco);
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 40px 0;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            color: var(--color-primario);
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--color-secundario);
+            color: var(--color-blanco);
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background-color: var(--color-acento);
+        }
+        
+        .btn:hover {
+            background-color: #2980B9;
+        }
+        
+        .btn-primary:hover {
+            background-color: #C0392B;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            background-color: var(--color-blanco);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px var(--color-sombra);
+            margin-bottom: 40px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-borde);
+        }
+        
+        th {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            font-weight: 500;
+        }
+        
+        tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .btn-action {
+            padding: 6px 12px;
+            margin: 0 5px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .btn-edit {
+            background-color: var(--color-secundario);
+        }
+        
+        .btn-delete {
+            background-color: var(--color-acento);
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .status-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-warning {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+        
+        /* Chat Button */
+        .chat-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, background-color 0.3s;
+            z-index: 99;
+        }
+        
+        .chat-button:hover {
+            background-color: #C0392B;
+            transform: scale(1.1);
+        }
+        
+        .chat-button::after {
+            content: "¿Necesitas ayuda?";
+            position: absolute;
+            right: 70px;
+            white-space: nowrap;
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .chat-button:hover::after {
+            opacity: 1;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px 0;
+            text-align: center;
+            margin-top: auto;
+        }
+        
+        .footer-logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 10px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .chat-button {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+            
+            .btn-action {
+                padding: 4px 8px;
+                margin: 2px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html" class="logo">OptiWeb</a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="index.html#porque">¿Por qué OptiWeb?</a></li>
+                    <li><a href="index.html#prueba">Prueba Gratis</a></li>
+                    <li><a href="index.html#login" class="btn-login">Iniciar sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Gestión de Inventario</h1>
+                <button class="btn btn-primary">Agregar nuevo producto</button>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre del producto</th>
+                            <th>Código</th>
+                            <th>Categoría</th>
+                            <th>Stock actual</th>
+                            <th>Lote</th>
+                            <th>Fecha de caducidad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Café Premium 250g</td>
+                            <td>CAF-001</td>
+                            <td>Bebidas</td>
+                            <td><span class="status status-success">125 unidades</span></td>
+                            <td>LOTE-2023-05</td>
+                            <td>15/10/2024</td>
+                            <td>
+                                <button class="btn btn-action btn-edit">Editar</button>
+                                <button class="btn btn-action btn-delete">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Té Verde Orgánico</td>
+                            <td>TEA-042</td>
+                            <td>Bebidas</td>
+                            <td><span class="status status-warning">32 unidades</span></td>
+                            <td>LOTE-2023-08</td>
+                            <td>30/09/2024</td>
+                            <td>
+                                <button class="btn btn-action btn-edit">Editar</button>
+                                <button class="btn btn-action btn-delete">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Azúcar Morena 1kg</td>
+                            <td>AZU-156</td>
+                            <td>Endulzantes</td>
+                            <td><span class="status status-success">78 unidades</span></td>
+                            <td>LOTE-2023-11</td>
+                            <td>20/12/2025</td>
+                            <td>
+                                <button class="btn btn-action btn-edit">Editar</button>
+                                <button class="btn btn-action btn-delete">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Leche en Polvo 400g</td>
+                            <td>LEC-087</td>
+                            <td>Lácteos</td>
+                            <td><span class="status status-warning">15 unidades</span></td>
+                            <td>LOTE-2023-09</td>
+                            <td>05/03/2024</td>
+                            <td>
+                                <button class="btn btn-action btn-edit">Editar</button>
+                                <button class="btn btn-action btn-delete">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Vasos Desechables 12oz</td>
+                            <td>VAS-203</td>
+                            <td>Utensilios</td>
+                            <td><span class="status status-success">240 unidades</span></td>
+                            <td>LOTE-2023-12</td>
+                            <td>No aplica</td>
+                            <td>
+                                <button class="btn btn-action btn-edit">Editar</button>
+                                <button class="btn btn-action btn-delete">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo">OptiWeb</div>
+            <p>&copy; 2023 OptiWeb. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Chat Button -->
+    <button class="chat-button" aria-label="Abrir chat de ayuda">💬</button>
+</body>
+</html>
